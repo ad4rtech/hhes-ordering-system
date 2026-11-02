@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colours sampled from the register design. Edit here and the whole app follows. */
+  --color-primary: #0a67a8;
+  --color-primary-hover: #085a94;
+  --color-primary-soft: #eef4fa;
+  --color-primary-softer: #e1ecf6;
+
+  --color-ink: #111827;      /* headings, labels */
+  --color-muted: #6b7280;    /* secondary text */
+  --color-subtle: #9ca3af;   /* placeholders */
+
+  --color-canvas: #f5f7fa;   /* page background */
+  --color-chrome: #fafaf8;   /* header and footer */
+  --color-surface: #ffffff;  /* cards */
+  --color-panel: #f1f6fa;    /* guide panels */
+  --color-field: #faf9f7;    /* input background */
+
+  --color-line: #e5e7eb;
+  --color-line-strong: #d6dbe1;
+
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+  --color-success: #1d7a4a;
+  --color-success-soft: #ecf8f1;
+  --color-warning: #b54708;
+  --color-warning-soft: #fffaeb;
+
+  --color-positive: #12a672;
+  --color-positive-hover: #0e8f62;
+  --color-attention: #f97316;
+  --color-danger-solid: #ef4444;
+
+  --radius-field: 0.5rem;
+  --radius-card: 1rem;
+}
+
+/* Font roles: font-sans = Lexend (body/UI), font-display = Sansation (headings, brand),
+   font-mono = Courier Prime (order references, receipt numbers, amounts) */
+@theme inline {
+  --font-sans: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sansation), var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-courier), ui-monospace, "Courier New", monospace;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-canvas font-sans text-ink antialiased; }
+  h1, h2, h3, h4 { @apply font-display; }
+  ::selection { background: color-mix(in srgb, var(--color-primary) 20%, white); }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+}
