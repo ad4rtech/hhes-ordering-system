@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-export type BadgeTone = "soft" | "success" | "successSoft" | "plain" | "danger" | "dangerSoft" | "attention" | "warning" | "info" | "neutral";
+export type BadgeTone = "soft" | "success" | "successSoft" | "plain" | "danger" | "dangerSoft" | "attention" | "warning" | "info" | "neutral" | "positive";
 
 const TONES: Record<BadgeTone, string> = {
   soft: "bg-panel font-semibold text-ink",

@@ -26,7 +26,7 @@ const samples: Record<string, ReactElement> = {
   RegistrationReceived: <RegistrationReceived contactName={o.contactName} orgName={o.orgName} />,
   OrgApproved: <OrgApproved contactName={o.contactName} orgName={o.orgName} loginUrl="http://localhost:3000/login" />,
   OrgRejected: <OrgRejected contactName={o.contactName} orgName={o.orgName} reason="We couldn't verify your church affiliation." />,
-  QuarterOpened: <QuarterOpened contactName={o.contactName} quarterName="Q4 2026" deadline="31 October 2026" orderUrl={url} />,
+  QuarterOpened: <QuarterOpened contactName={o.contactName} quarterName="Q1 2027" opensOn="1 January 2027" deadline="31 January 2027" orderUrl={url} />,
   DeadlineReminder: <DeadlineReminder contactName={o.contactName} quarterName="Q4 2026" deadline="31 October 2026" daysLeft={3} hasOrder={false} amountDue={0} actionUrl={url} />,
   DeadlineReminderUnpaid: <DeadlineReminder contactName={o.contactName} quarterName="Q4 2026" deadline="31 October 2026" daysLeft={1} hasOrder amountDue={3500} actionUrl={url} />,
   OrderSubmitted: <OrderSubmitted {...o} payUrl={url} />,

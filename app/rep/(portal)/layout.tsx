@@ -5,6 +5,7 @@ import { RepTopbar, type QuarterPill } from "@/components/layout/RepTopbar";
 import { PublicFooter } from "@/components/layout/PublicFooter";
 import { fmtDate, fmtDayMonth } from "@/lib/utils/format";
 import { REP_WIDTH } from "@/lib/rep/layout";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 

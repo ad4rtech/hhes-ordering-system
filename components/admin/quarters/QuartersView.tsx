@@ -13,7 +13,13 @@ import { fmtDate, fmtDay, kes } from "@/lib/utils/format";
 import { cn } from "@/lib/cn";
 import type { ExtensionRow, QuarterRow } from "@/lib/admin/quarters";
 
-type DialogState = { type: "create" } | { type: "edit" | "publish" | "close"; q: QuarterRow } | { type: "extend" } | null;
+type DialogState =
+  | { type: "create" }
+  | { type: "edit"; q: QuarterRow }
+  | { type: "publish"; q: QuarterRow }
+  | { type: "close"; q: QuarterRow }
+  | { type: "extend" }
+  | null;
 
 const STATUS: Record<QuarterRow["status"], [BadgeTone, string]> = { draft: ["neutral", "Draft"], published: ["successSoft", "Open"], closed: ["plain", "Closed"] };
 const countdown = (d: number) => (d < 0 ? "Deadline passed" : d === 0 ? "Closes today" : d === 1 ? "1 day left" : `${d} days left`);

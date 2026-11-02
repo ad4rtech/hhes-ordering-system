@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AdminTopbar } from "@/components/layout/AdminTopbar";
 import { PublicFooter } from "@/components/layout/PublicFooter";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
