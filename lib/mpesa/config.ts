@@ -15,6 +15,5 @@ export function getMpesaConfig() {
     shortcode: need("MPESA_SHORTCODE"),
     passkey: need("MPESA_PASSKEY"),
     transactionType: process.env.MPESA_TRANSACTION_TYPE ?? "CustomerPayBillOnline",
-    callbackUrl: `${need("MPESA_CALLBACK_URL")}?secret=${encodeURIComponent(need("MPESA_CALLBACK_SECRET"))}`,
   };
 }

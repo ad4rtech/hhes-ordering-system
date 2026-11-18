@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { FLAG_MODE, FLAG_SEEN, REMEMBER_SECONDS, idleSeconds } from "@/lib/auth/flags";
 
 const PUBLIC = [
   "/", "/login", "/register", "/forgot-password", "/reset-password", "/set-password",
@@ -13,9 +12,6 @@ export async function proxy(request: NextRequest) {
 
   // Safaricom calls this unauthenticated; the route validates the payload itself.
   if (pathname.startsWith("/api/payments/callback")) return NextResponse.next();
-
-  // Search-engine and share-preview files are public
-  if (/^\/(robots\.txt|sitemap\.xml|opengraph-image|twitter-image|icon|apple-icon)/.test(pathname)) return NextResponse.next();
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
@@ -38,23 +34,10 @@ export async function proxy(request: NextRequest) {
   // API routes enforce their own auth; the proxy only keeps cookies fresh.
   if (pathname.startsWith("/api/")) return response;
 
-  // "Remember me": sign out after too long away (30 days remembered, otherwise the idle limit)
-  let expired = false;
-  if (user && pathname !== "/auth/callback" && pathname !== "/auth/confirm") {
-    const mode = request.cookies.get(FLAG_MODE)?.value;
-    const seen = Number(request.cookies.get(FLAG_SEEN)?.value);
-    const now = Math.floor(Date.now() / 1000);
-    const limit = mode === "remember" ? REMEMBER_SECONDS : idleSeconds();
-
-    if (!mode || !Number.isFinite(seen) || now - seen > limit) {
-      await supabase.auth.signOut();
-      user = null;
-      expired = true;
-    } else if (now - seen > 60) { // slide the window, at most once a minute
-      response.cookies.set(FLAG_SEEN, String(now), {
-        path: "/", sameSite: "lax", maxAge: mode === "remember" ? REMEMBER_SECONDS : undefined,
-      });
-    }
+  // "Remember me": no flag cookie means the browser was closed without it (or 30 days passed)
+  if (user && pathname !== "/auth/callback" && !request.cookies.has("hhes_remember") && !request.cookies.has("hhes_session")) {
+    await supabase.auth.signOut();
+    user = null;
   }
 
   const go = (path: string, params?: Record<string, string>) => {
@@ -67,7 +50,7 @@ export async function proxy(request: NextRequest) {
   };
 
   const loginFor = pathname.startsWith("/admin") ? "/admin/login" : "/login";
-  if (!user) return PUBLIC.includes(pathname) ? response : go(loginFor, expired ? { reason: "expired" } : undefined);
+  if (!user) return PUBLIC.includes(pathname) ? response : go(loginFor);
 
   const role = user.app_metadata?.role as "admin" | "org_rep" | undefined;
   const home = role === "admin" ? "/admin/dashboard" : "/rep/dashboard";
@@ -85,13 +68,13 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/rep")) {
     const { data: org } = await supabase
       .from("organisations").select("status").eq("user_id", user.id).maybeSingle();
-    if (!org) return go("/register/complete");
-    if (org.status !== "approved") return go("/login", { reason: org.status }); // BR-09
+    if (!org) return go("/register/complete");                                   // signed in with Google, not registered yet
+    if (org.status !== "approved") return go("/login", { reason: org.status });  // BR-09
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|waf|webp|woff2?)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2?)$).*)"],
 };

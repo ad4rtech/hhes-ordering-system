@@ -1,5 +1,6 @@
 import "server-only";
 import { getMpesaConfig } from "./config";
+import { buildCallbackUrl } from "@/lib/mpesa/callbackUrl";
 
 export class DarajaError extends Error {}
 
@@ -26,6 +27,7 @@ export async function stkPush(args: {
   phone: string; amount: number; accountReference: string; description: string;
 }) {
   const c = getMpesaConfig();
+  const callbackUrl = buildCallbackUrl(); // validates before Safaricom is called
   const ts = timestamp();
   const password = Buffer.from(`${c.shortcode}${c.passkey}${ts}`).toString("base64");
 
@@ -43,7 +45,7 @@ export async function stkPush(args: {
       PartyA: args.phone,
       PartyB: c.shortcode,
       PhoneNumber: args.phone,
-      CallBackURL: c.callbackUrl,
+      CallBackURL: callbackUrl,
       AccountReference: args.accountReference, // max 12 chars
       TransactionDesc: args.description,
     }),
